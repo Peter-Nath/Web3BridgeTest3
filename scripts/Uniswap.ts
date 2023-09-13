@@ -57,7 +57,9 @@ async function main() {
   const Liquidity = await ethers.getContractAt("IERC20", pair);
   const liquidBal = await Liquidity.balanceOf(LiquidProv);
 
-  console.log(`Liquidity balance is ${await ethers.formatEther(liquidBal)}`);
+  console.log(`Liquidity balance is ${await ethers.formatEther(liquidBal)}`);  
+  
+  Liquidity.connect(signer).approve(uniswap, ethers.parseEther("100000"));
 
   const withdrawLiquid = await uniswap
     .connect(signer)
@@ -70,7 +72,10 @@ async function main() {
       deadline
     );
   await withdrawLiquid.wait();
-  console.log(withdrawLiquid);
+  const der = await Liquidity.balanceOf(LiquidProv);
+  console.log(
+    `Liquidity balance after withdrawal is ${ethers.formatEther(der)}`
+  );
 }
 
 main().catch((error) => {
